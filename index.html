@@ -19,23 +19,29 @@
     function displayProblem(problem) {
       const container = document.getElementById('problem-container');
       const container2 = document.getElementById('hint-container');
+      const container3 = document.getElementById('source-container');
+
       container.innerHTML = `
         <h3>${problem.date}</h3>
-        <p><strong>Source:</strong> ${problem.source || 'Unknown'}</p>
-        <p><strong>Problem:</strong><br>${problem.statement}</p>
-        ${problem.link ? `<p><a href="${problem.link}" target="_blank">View Original</a></p>` : ''}
+        <p><strong>Problem:</strong><br>${problem.statement}</p>: ''
       `;
 
       container2.innerHTML = `
         ${problem.hint ? `${problem.hint}</p>` : ''}
       `;
+
+      container3.innerHTML = `
+        ${problem.link ? `<p><a href="${problem.link}" target="_blank">${problem.source || 'Unknown'}</a></p>`: ''}
+        `;
     }
 
     function displayNoProblem() {
       const container = document.getElementById('problem-container');
       const container2 = document.getElementById('hint-container');
+      const container3 = document.getElementById('source-container');
       container.innerHTML = `<p>No problem found for today.</p>`;
-      container.innerHTML = `<p>No hint for today.</p>`;
+      container2.innerHTML = `<p>No hint for today.</p>`;
+      container3.innerHTML = `<p>No source for today.</p>`;
     }
 
     function fetchProblems() {
@@ -91,10 +97,11 @@
     .box2 {
       background-color: black;
       max-width: 800px;
+      width: fit-content;
       margin: 2rem auto;
     }
     .box2:hover {
-      background-color: black;
+      background-color: white;
     a {
       color: #007bff;
     }
@@ -120,6 +127,9 @@
   <div class="box">
     Hint:
     <div id="hint-container" class="box2">Loading...</div>
+  </div>
+  <div id="source-container" class="box">
+    Source: 
   </div>
 </body>
 </html>
