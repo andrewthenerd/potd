@@ -15,6 +15,8 @@
     const now = new Date();
     const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
     const today = formatDateToISO(utc8);
+    var currentDate = utc8.toLocaleDateString(); // Get the date in a user-friendly format
+    document.getElementById("currentDate").innerHTML = currentDate;
 
     function displayProblem(problem) {
       const container = document.getElementById('problem-container');
@@ -22,7 +24,6 @@
       const container3 = document.getElementById('source-container');
 
       container.innerHTML = `
-        <h3>${problem.date}</h3>
         <p><strong>Problem:</strong><br>${problem.statement}</p>
       `;
 
@@ -125,7 +126,7 @@
 </head>
 <body>
   <h1>Problem of the Day</h1>
-  <h2>Date: <span id="datetime"></span></h2>
+  <h2>Date: <span id="currentDate"></span></h2>
 
   <div id="problem-container" class="box">
     Loading problem...
