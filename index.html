@@ -6,9 +6,6 @@
   <title>Problem of the Day</title>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
-  console.log("Today's Date:", today);
-  console.log("All dates:", problems.map(p => p.date));
-
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
   
   function formatDateToISO(date) {
@@ -31,33 +28,36 @@
     container.innerHTML = `<p>No problem found for today.</p>`;
   }
   
-  function fetchProblems() {
-    fetch(CSV_URL)
-      .then(response => response.text())
-      .then(csvText => {
-        const parsed = Papa.parse(csvText, { header: true });
-        const today = formatDateToISO(new Date());
-  
-        const problems = parsed.data.map(row => ({
-          date: row["Date"]?.trim(),
-          statement: row["Problem Statement"]?.trim(),
-          source: row["Source"]?.trim(),
-          link: row["Link"]?.trim(),
-          hint: row["Hint"]?.trim()
-        })); 
-        
-        const todayProblem = problems.find(p => p.date === today);
-        if (todayProblem) {
-          displayProblem(todayProblem);
-        } else {
-          displayNoProblem();
-        }
-      })
-      .catch(error => {
-        console.error("Error loading CSV:", error);
+function fetchProblems() {
+  fetch(CSV_URL)
+    .then(response => response.text())
+    .then(csvText => {
+      const parsed = Papa.parse(csvText, { header: true });
+
+      const now = new Date();
+      const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000); // UTC+8
+      const today = formatDateToISO(utc8);
+
+      const problems = parsed.data.map(row => ({
+        date: row["Date"]?.trim(),
+        statement: row["Problem Statement"]?.trim(),
+        source: row["Source"]?.trim(),
+        link: row["Link"]?.trim(),
+        hint: row["Hint"]?.trim()
+      }));
+
+      const todayProblem = problems.find(p => p.date === today);
+      if (todayProblem) {
+        displayProblem(todayProblem);
+      } else {
         displayNoProblem();
-      });
-  }
+      }
+    })
+    .catch(error => {
+      console.error("Error loading CSV:", error);
+      displayNoProblem();
+    });
+}
   
   window.onload = fetchProblems;
   </script>
