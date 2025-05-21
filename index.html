@@ -11,6 +11,8 @@
     const now = new Date();
     const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
     const today = formatDateToISO(utc8);
+    var datetimeElement = document.getElementById("utc8");
+    datetimeElement.innerHTML = today.toLocaleString();
 
     function formatDateToISO(date) {
       return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
@@ -22,8 +24,7 @@
       const container3 = document.getElementById('source-container');
 
       container.innerHTML = `
-        <h3>${problem.date}</h3>
-        <p><strong>Problem:</strong><br>${problem.statement}</p>: ''
+        <p><strong>Problem:</strong><br>${problem.statement}</p>
       `;
 
       container2.innerHTML = `
@@ -31,7 +32,7 @@
       `;
 
       container3.innerHTML = `
-        ${problem.link ? `<p><a href="${problem.link}" target="_blank">${problem.source || 'Unknown'}</a></p>`: ''}
+        ${problem.link ? `<p>Source: <a href="${problem.link}" target="_blank">${problem.source || 'Unknown'}</a></p>`: ''}
         `;
     }
 
@@ -117,19 +118,12 @@
   <h1>Problem of the Day</h1>
   <h2><span id="datetime"></span></h2>
 
-  <script>
-    var today = new Date();
-    var datetimeElement = document.getElementById("datetime");
-    datetimeElement.innerHTML = today.toLocaleString();
-  </script>
-
   <div id="problem-container" class="box">Loading...</div>
   <div class="box">
     Hint:
     <div id="hint-container" class="box2">Loading...</div>
   </div>
   <div id="source-container" class="box">
-    Source: 
   </div>
 </body>
 </html>
