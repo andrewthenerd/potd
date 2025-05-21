@@ -15,14 +15,17 @@
     const now = new Date();
     const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
     const today = formatDateToISO(utc8);
-    var currentDate = utc8.toLocaleDateString(); // Get the date in a user-friendly format
-    document.getElementById("currentDate").innerHTML = currentDate;
 
     function displayProblem(problem) {
+      const container0 = document.getElementById('date-container');
       const container = document.getElementById('problem-container');
       const container2 = document.getElementById('hint-container');
       const container3 = document.getElementById('source-container');
-
+      
+      container0.innerHTML = `
+        <p><strong>Date</strong><br>${problem.date}</p>
+      `;
+      
       container.innerHTML = `
         <p><strong>Problem:</strong><br>${problem.statement}</p>
       `;
@@ -37,10 +40,12 @@
     }
 
     function displayNoProblem() {
+      const container0 = document.getElementById('date-container');
       const container = document.getElementById('problem-container');
       const container2 = document.getElementById('hint-container');
       const container3 = document.getElementById('source-container');
-
+      
+      container0.innerHTML = `<p>Error</p>`;
       container.innerHTML = `<p>No problem found for today.</p>`;
       container2.innerHTML = `<p>No hint for today.</p>`;
       container3.innerHTML = `<p>No source for today.</p>`;
@@ -126,7 +131,7 @@
 </head>
 <body>
   <h1>Problem of the Day</h1>
-  <h2>Date: <span id="currentDate"></span></h2>
+  <h2>Date: <span id="date-container"></span></h2>
 
   <div id="problem-container" class="box">
     Loading problem...
