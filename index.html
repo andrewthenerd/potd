@@ -23,19 +23,19 @@
       const container3 = document.getElementById('source-container');
       
       container0.innerHTML = `
-        <p><strong>Date</strong><br>${problem.date}</p>
+        ${problem.date}
       `;
       
       container.innerHTML = `
-        <p><strong>Problem:</strong><br>${problem.statement}</p>
+        <p><strong>Problem:</strong> ${problem.statement}</p>
       `;
 
       container2.innerHTML = `
-        ${problem.hint ? `Hint:${problem.hint}</p>` : ''}
+        ${problem.hint ? `<strong>Hint:</strong> ${problem.hint}</p>` : ''}
       `;
 
       container3.innerHTML = `
-        ${problem.link ? `<p>Source: <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : ''}
+        ${problem.link ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : ''}
       `;
     }
 
