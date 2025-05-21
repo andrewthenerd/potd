@@ -18,18 +18,24 @@
 
     function displayProblem(problem) {
       const container = document.getElementById('problem-container');
+      const container2 = document.getElementById('hint-container');
       container.innerHTML = `
         <h3>${problem.date}</h3>
         <p><strong>Source:</strong> ${problem.source || 'Unknown'}</p>
         <p><strong>Problem:</strong><br>${problem.statement}</p>
         ${problem.link ? `<p><a href="${problem.link}" target="_blank">View Original</a></p>` : ''}
-        ${problem.hint ? `<p><em>Hint:</em> ${problem.hint}</p>` : ''}
+      `;
+
+      container2.innerHTML = `
+        ${problem.hint ? `${problem.hint}</p>` : ''}
       `;
     }
 
     function displayNoProblem() {
       const container = document.getElementById('problem-container');
+      const container2 = document.getElementById('hint-container');
       container.innerHTML = `<p>No problem found for today.</p>`;
+      container.innerHTML = `<p>No hint for today.</p>`;
     }
 
     function fetchProblems() {
@@ -82,6 +88,13 @@
       margin: 2rem auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
+    .box2 {
+      background-color: black;
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+    .box2:hover {
+      background-color: black;
     a {
       color: #007bff;
     }
@@ -104,5 +117,9 @@
   </script>
 
   <div id="problem-container" class="box">Loading...</div>
+  <div class="box">
+    Hint:
+    <div id="hint-container" class="box2">Loading...</div>
+  </div>
 </body>
 </html>
