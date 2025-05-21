@@ -36,13 +36,13 @@
         const today = formatDateToISO(new Date());
   
         const problems = parsed.data.map(row => ({
-          date: row.date?.trim(),
-          statement: row["problem statement"]?.trim(),
-          source: row.source?.trim(),
-          link: row.link?.trim(),
-          hint: row.hint?.trim()
-        }));
-  
+          date: row["Date"]?.trim(),
+          statement: row["Problem Statement"]?.trim(),
+          source: row["Source"]?.trim(),
+          link: row["Link"]?.trim(),
+          hint: row["Hint"]?.trim()
+        })); 
+        
         const todayProblem = problems.find(p => p.date === today);
         if (todayProblem) {
           displayProblem(todayProblem);
