@@ -4,6 +4,61 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Problem of the Day</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script>
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
+  
+  function formatDateToISO(date) {
+    return date.toISOString().split('T')[0]; // "2025-05-22"
+  }
+  
+  function displayProblem(problem) {
+    const container = document.getElementById('problem-container');
+    container.innerHTML = `
+      <h3>${problem.date}</h3>
+      <p><strong>Source:</strong> ${problem.source || 'Unknown'}</p>
+      <p><strong>Problem:</strong><br>${problem.statement}</p>
+      ${problem.link ? `<p><a href="${problem.link}" target="_blank">View Original</a></p>` : ''}
+      ${problem.hint ? `<p><em>Hint:</em> ${problem.hint}</p>` : ''}
+    `;
+  }
+  
+  function displayNoProblem() {
+    const container = document.getElementById('problem-container');
+    container.innerHTML = `<p>No problem found for today.</p>`;
+  }
+  
+  function fetchProblems() {
+    fetch(CSV_URL)
+      .then(response => response.text())
+      .then(csvText => {
+        const parsed = Papa.parse(csvText, { header: true });
+        const today = formatDateToISO(new Date());
+  
+        const problems = parsed.data.map(row => ({
+          date: row.date?.trim(),
+          statement: row["problem statement"]?.trim(),
+          source: row.source?.trim(),
+          link: row.link?.trim(),
+          hint: row.hint?.trim()
+        }));
+  
+        const todayProblem = problems.find(p => p.date === today);
+        if (todayProblem) {
+          displayProblem(todayProblem);
+        } else {
+          displayNoProblem();
+        }
+      })
+      .catch(error => {
+        console.error("Error loading CSV:", error);
+        displayNoProblem();
+      });
+  }
+  
+  window.onload = fetchProblems;
+  </script>
+
   <style>
     body {
       font-family: sans-serif;
