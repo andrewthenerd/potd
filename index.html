@@ -267,37 +267,33 @@
       const userAnswer = document.getElementById('user-answer').value.trim();
       const feedbackDiv = document.getElementById('feedback');
       
+      // Normalize answers for comparison
       const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, '');
       const normalizedCorrectAnswer = currentProblem.answer.toLowerCase().replace(/\s+/g, '');
       
+      // Check if answer is correct
       const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
-      
+
+      // Display feedback
       feedbackDiv.style.display = 'block';
-      
-      // Format explanation with newlines
-      const formattedExplanation = currentProblem.explanation 
-        ? formatContentWithNewlines(currentProblem.explanation)
-        : '';
-      
       if (isCorrect) {
-        feedbackDiv.className = 'box feedback correct';
-        feedbackDiv.innerHTML = `
-          <h3>${translations.correct[currentLang]}</h3>
-          ${formattedExplanation ? `<div class="feedback-content">${formattedExplanation}</div>` : ''}
-        `;
+          feedbackDiv.className = 'box feedback correct';
+          feedbackDiv.innerHTML = `
+              <h3>Correct!</h3>
+              ${currentProblem.explanation ? `<p><strong>Explanation:</strong> ${currentProblem.explanation}</p>` : ''}
+          `;
       } else {
-        feedbackDiv.className = 'box feedback incorrect';
-        feedbackDiv.innerHTML = `
-          <h3>${translations.incorrect[currentLang]}</h3>
-          <p>${translations.correctAnswer[currentLang]} ${currentProblem.answer}</p>
-          ${formattedExplanation ? `<div class="feedback-content">${formattedExplanation}</div>` : ''}
-        `;
+          feedbackDiv.className = 'box feedback incorrect';
+          feedbackDiv.innerHTML = `
+              <h3>Not quite right.</h3>
+              <p>The correct answer is: ${currentProblem.answer}</p>
+              ${currentProblem.explanation ? `<p><strong>Explanation:</strong> ${currentProblem.explanation}</p>` : ''}
+          `;
       }
       
-      // Re-typeset math in feedback
+      // Re-typeset in case feedback contains math
       if (window.MathJax) {
-        MathJax.typesetPromise([feedbackDiv])
-          .catch(err => console.log("MathJax typeset error:", err));
+        MathJax.typesetPromise().catch(err => console.log("MathJax typesetting error:", err));
       }
     }
 
