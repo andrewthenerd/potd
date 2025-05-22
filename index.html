@@ -282,14 +282,14 @@
           feedbackDiv.className = 'box feedback correct';
           feedbackDiv.innerHTML = `
               <h3>Correct!</h3>
-              ${currentProblem.explanation ? `<p><strong>Explanation:</strong> ${formattedExplanation}</p>` : ''}
+              ${formattedExplanation ? `<p><strong>Explanation:</strong> ${formattedExplanation}</p>` : ''}
           `;
       } else {
           feedbackDiv.className = 'box feedback incorrect';
           feedbackDiv.innerHTML = `
               <h3>Not quite right.</h3>
               <p>The correct answer is: ${currentProblem.answer}</p>
-              ${currentProblem.explanation ? `<p><strong>Explanation:</strong> ${formattedExplanation}</p>` : ''}
+              ${formattedExplanation ? `<p><strong>Explanation:</strong> ${formattedExplanation}</p>` : ''}
           `;
       }
       
