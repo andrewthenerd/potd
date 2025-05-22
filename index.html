@@ -16,119 +16,6 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script>
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
-
-    function formatDateToISO(date) {
-      return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
-    }
-
-    const now = new Date();
-    const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-    const today = formatDateToISO(utc8);
-
-    function displayProblem(problem) {
-      const container0 = document.getElementById('date-container');
-      const container = document.getElementById('problem-container');
-      const container2 = document.getElementById('hint-container');
-      const container3 = document.getElementById('source-container');
-
-      if (window.MathJax) {
-        MathJax.typeset();
-      }
-      
-      container0.innerHTML = `
-        <p>${problem.date}</p>
-      `;
-      
-      container.innerHTML = `
-        <p><strong>Problem:</strong> ${problem.statement}</p>
-      `;
-      
-      MathJax.typeset();
-
-      container2.innerHTML = `
-        ${problem.hint ? `<p><strong>Hint:</strong> ${problem.hint}</p>` : ''}
-      `;
-
-      MathJax.typeset();
-
-      container3.innerHTML = `
-        ${problem.link ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : ''}
-      `;
-
-      document.getElementById('submit-answer').addEventListener('click', function() {
-        const userAnswer = document.getElementById('user-answer').value.trim();
-        const feedbackDiv = document.getElementById('feedback');
-        const normalizedCorrectAnswer = problem.answer;
-        
-        // Check if answer is correct or in alternatives
-        let isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
-        
-        // Display feedback
-        feedbackDiv.style.display = 'block';
-        if (isCorrect) {
-            feedbackDiv.className = 'feedback correct';
-            feedbackDiv.innerHTML = `
-                <h3>Correct!</h3>
-                <p>${problem.explanation}</p>
-            `;
-        } else {
-            feedbackDiv.className = 'feedback incorrect';
-            feedbackDiv.innerHTML = `
-                <h3>Not quite right.</h3>
-                <p>The correct answer is: ${problem.answer}</p>
-                <p>${problem.explanation}</p>
-            `;
-        }
-      });
-    }
-
-    function displayNoProblem() {
-      const container0 = document.getElementById('date-container');
-      const container = document.getElementById('problem-container');
-      const container2 = document.getElementById('hint-container');
-      const container3 = document.getElementById('source-container');
-      
-      container0.innerHTML = `<p>Error</p>`;
-      container.innerHTML = `<p>No problem found for today.</p>`;
-      container2.innerHTML = `<p>No hint for today.</p>`;
-      container3.innerHTML = `<p>No source for today.</p>`;
-    }
-
-    function fetchProblems() {
-      fetch(CSV_URL)
-        .then(response => response.text())
-        .then(csvText => {
-          const parsed = Papa.parse(csvText, { header: true });
-          const problems = parsed.data.map(row => ({
-            date: row["Date"]?.trim(),
-            statement: row["Problem Statement"]?.trim(),
-            source: row["Source"]?.trim(),
-            link: row["Link"]?.trim(),
-            hint: row["Hint"]?.trim(),
-            answer: row["Answer"]?.trim(),
-            explanation: row["Explanation"]?.trim()
-          }));
-
-          console.log("Today's Date (UTC+8):", today);
-          console.log("Available Dates:", problems.map(p => p.date));
-
-          const todayProblem = problems.find(p => p.date === today);
-          if (todayProblem) {
-            displayProblem(todayProblem);
-          } else {
-            displayNoProblem();
-          }
-        })
-        .catch(error => {
-          console.error("Error loading CSV:", error);
-          displayNoProblem();
-        });
-    }
-
-    window.onload = fetchProblems;
-  </script>
   <style>
     body {
       font-family: sans-serif;
@@ -245,6 +132,19 @@
       background-color: #c4c4c4;
     }
 
+    .feedback {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .correct {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .incorrect {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
   </style>
 </head>
 <body>
@@ -270,10 +170,143 @@
     Answer:
     <textarea id="user-answer" rows="1" columns="1"></textarea>
     <center><button class="button" id="submit-answer">Submit</button></center>
-    <div id=""></div>
   </div>
 
-  <div id="feedback" class="box">Feedback:</div>
-  
+  <div id="feedback" class="box feedback">
+    <!-- Feedback will appear here -->
+  </div>
+
+  <script>
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
+
+    function formatDateToISO(date) {
+      return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
+    }
+
+    const now = new Date();
+    const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+    const today = formatDateToISO(utc8);
+
+    let currentProblem = null;
+
+    function displayProblem(problem) {
+      currentProblem = problem; // Store the current problem for answer checking
+      
+      const container0 = document.getElementById('date-container');
+      const container = document.getElementById('problem-container');
+      const container2 = document.getElementById('hint-container');
+      const container3 = document.getElementById('source-container');
+
+      container0.innerHTML = `<p>${problem.date}</p>`;
+      container.innerHTML = `<p><strong>Problem:</strong> ${problem.statement}</p>`;
+      
+      container2.innerHTML = `
+        ${problem.hint ? `<p><strong>Hint:</strong> ${problem.hint}</p>` : ''}
+      `;
+
+      container3.innerHTML = `
+        ${problem.link ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : ''}
+      `;
+
+      // MathJax typesetting
+      if (window.MathJax) {
+        MathJax.typesetPromise().catch(err => console.log("MathJax typesetting error:", err));
+      }
+    }
+
+    function displayNoProblem() {
+      const container0 = document.getElementById('date-container');
+      const container = document.getElementById('problem-container');
+      const container2 = document.getElementById('hint-container');
+      const container3 = document.getElementById('source-container');
+      
+      container0.innerHTML = `<p>${today}</p>`;
+      container.innerHTML = `<p>No problem found for today.</p>`;
+      container2.innerHTML = `<p>No hint available.</p>`;
+      container3.innerHTML = `<p>No source available.</p>`;
+    }
+
+    function checkAnswer() {
+      if (!currentProblem) return;
+      
+      const userAnswer = document.getElementById('user-answer').value.trim();
+      const feedbackDiv = document.getElementById('feedback');
+      
+      // Normalize answers for comparison
+      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, '');
+      const normalizedCorrectAnswer = currentProblem.answer.toLowerCase().replace(/\s+/g, '');
+      
+      // Check if answer is correct
+      const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+      
+      // Display feedback
+      feedbackDiv.style.display = 'block';
+      if (isCorrect) {
+          feedbackDiv.className = 'box feedback correct';
+          feedbackDiv.innerHTML = `
+              <h3>Correct!</h3>
+              ${currentProblem.explanation ? `<p>${currentProblem.explanation}</p>` : ''}
+          `;
+      } else {
+          feedbackDiv.className = 'box feedback incorrect';
+          feedbackDiv.innerHTML = `
+              <h3>Not quite right.</h3>
+              <p>The correct answer is: ${currentProblem.answer}</p>
+              ${currentProblem.explanation ? `<p>${currentProblem.explanation}</p>` : ''}
+          `;
+      }
+      
+      // Re-typeset in case feedback contains math
+      if (window.MathJax) {
+        MathJax.typesetPromise().catch(err => console.log("MathJax typesetting error:", err));
+      }
+    }
+
+    function fetchProblems() {
+      fetch(CSV_URL)
+        .then(response => response.text())
+        .then(csvText => {
+          const parsed = Papa.parse(csvText, { header: true });
+          const problems = parsed.data.map(row => ({
+            date: row["Date"]?.trim(),
+            statement: row["Problem Statement"]?.trim(),
+            source: row["Source"]?.trim(),
+            link: row["Link"]?.trim(),
+            hint: row["Hint"]?.trim(),
+            answer: row["Answer"]?.trim(),
+            explanation: row["Explanation"]?.trim()
+          }));
+
+          console.log("Today's Date (UTC+8):", today);
+          console.log("Available Dates:", problems.map(p => p.date));
+
+          const todayProblem = problems.find(p => p.date === today);
+          if (todayProblem) {
+            displayProblem(todayProblem);
+          } else {
+            displayNoProblem();
+          }
+        })
+        .catch(error => {
+          console.error("Error loading CSV:", error);
+          displayNoProblem();
+        });
+    }
+
+    // Initialize when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchProblems();
+      
+      // Set up answer submission handler
+      document.getElementById('submit-answer').addEventListener('click', checkAnswer);
+      
+      // Allow submission with Enter key
+      document.getElementById('user-answer').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          checkAnswer();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
