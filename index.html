@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Problem of the Day</title>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -38,7 +38,7 @@
       }
       
       container0.innerHTML = `
-        <p><strong>Date:</strong> ${problem.date}</p>
+        <p>${problem.date}</p>
       `;
       
       container.innerHTML = `
@@ -51,9 +51,37 @@
         ${problem.hint ? `<p><strong>Hint:</strong> ${problem.hint}</p>` : ''}
       `;
 
+      MathJax.typeset();
+
       container3.innerHTML = `
         ${problem.link ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : ''}
       `;
+
+      document.getElementById('submit-answer').addEventListener('click', function() {
+        const userAnswer = document.getElementById('user-answer').value.trim();
+        const feedbackDiv = document.getElementById('feedback');
+        const normalizedCorrectAnswer = problem.answer;
+        
+        // Check if answer is correct or in alternatives
+        let isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
+        
+        // Display feedback
+        feedbackDiv.style.display = 'block';
+        if (isCorrect) {
+            feedbackDiv.className = 'feedback correct';
+            feedbackDiv.innerHTML = `
+                <h3>Correct!</h3>
+                <p>${problem.explanation}</p>
+            `;
+        } else {
+            feedbackDiv.className = 'feedback incorrect';
+            feedbackDiv.innerHTML = `
+                <h3>Not quite right.</h3>
+                <p>The correct answer is: ${problem.answer}</p>
+                <p>${problem.explanation}</p>
+            `;
+        }
+      });
     }
 
     function displayNoProblem() {
@@ -78,7 +106,9 @@
             statement: row["Problem Statement"]?.trim(),
             source: row["Source"]?.trim(),
             link: row["Link"]?.trim(),
-            hint: row["Hint"]?.trim()
+            hint: row["Hint"]?.trim(),
+            answer: row["Answer"]?.trim(),
+            explanation: row["Explanation"]?.trim()
           }));
 
           console.log("Today's Date (UTC+8):", today);
@@ -180,6 +210,41 @@
     em {
       color: #555;
     }
+
+    footer {
+      max-width: 800px;
+    }
+    
+    textarea {
+      width: 100%;
+      height: fit-content;
+      padding: 12px 20px;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      background-color: #f8f8f8;
+      font-size: 16px;
+      resize: none;
+    }
+
+    .button {
+      background-color: #dedede;
+      border: none;
+      border-radius: 8px;
+      color: black;
+      padding: 10px 30px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.5s;
+    }
+
+    .button:hover {
+      background-color: #c4c4c4;
+    }
+
   </style>
 </head>
 <body>
@@ -200,6 +265,15 @@
       Loading hint...
     </div>
   </div>
+
+  <div id="answer" class="box">
+    Answer:
+    <textarea id="user-answer" rows="1" columns="1"></textarea>
+    <center><button class="button" id="submit-answer">Submit</button></center>
+    <div id=""></div>
+  </div>
+
+  <div id="feedback" class="box">Feedback:</div>
   
 </body>
 </html>
