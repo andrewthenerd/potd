@@ -161,6 +161,15 @@
       max-width: 800px;
       font-size: 16px;
     }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .feedback:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -315,6 +324,13 @@
       if (window.MathJax) {
         MathJax.typesetPromise().catch(err => console.log("MathJax typesetting error:", err));
       }
+
+      setTimeout(() => {
+      feedbackDiv.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest'
+        });
+      }, 100);
     }
 
     function fetchProblems() {
@@ -351,13 +367,16 @@
     // Initialize when page loads
     window.addEventListener('DOMContentLoaded', () => {
       fetchProblems();
-      
-      // Set up answer submission handler
-      document.getElementById('submit-answer').addEventListener('click', checkAnswer);
-      
-      // Allow submission with Enter key
-      document.getElementById('user-answer').addEventListener('keypress', (e) => {
+      // In your initialization code
+      document.getElementById('submit-answer').addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent form submission if in a form
+        checkAnswer();
+      });
+
+      // Also update the Enter key handler if you have one
+      document.getElementById('user-answer').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
+          e.preventDefault();
           checkAnswer();
         }
       });
