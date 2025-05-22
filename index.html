@@ -137,7 +137,7 @@
       padding: 15px;
       border: 0px; 
       opacity: 0;
-      max-width: 800px;
+      width: 800px;
     }
 
     .correct {
@@ -145,6 +145,7 @@
       color: #155724;
       opacity: 1;
       height: fit-content;
+      width: 800px;
     }
 
     .incorrect {
@@ -152,6 +153,7 @@
       color: #721c24;
       opacity: 1;
       height: fit-content;
+      width: 800px;
     }
   </style>
 </head>
@@ -180,9 +182,7 @@
     <center><button class="button" id="submit-answer">Submit</button></center>
   </div>
 
-  <div id="feedback" class="box feedback">
-    <!-- Feedback will appear here -->
-  </div>
+  <div id="feedback" class="box feedback"></div>
 
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
