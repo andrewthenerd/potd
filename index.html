@@ -109,11 +109,13 @@
     
     h1 {
       text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
     }
     
     h2 {
       text-align: center;
       font-size: 20px;
+      font-family: Arial, Helvetica, sans-serif;
     }
     
     .box {
@@ -128,40 +130,43 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       align-items: left;
     }
-
-    .box2 {
-      display: none;
+    
+    .hint {
       position: relative;
       background: white;
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 1.5rem;
       max-width: 800px;
-      height: fit-content;
+      max-height: 20px;
       margin: 1.5rem auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       align-items: left;
+      overflow: hidden;
+      transition: max-height 0.6s ease, background-color 0.3s ease;
     }
 
-    .button1 {
-      position: relative;
-      padding: 0.5rem;
-      max-width: 800px;
-      margin: 0.5rem auto;
-      align-items: left;
-
+    .hint-box {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      margin-top: 0rem;
     }
 
-    .button1:hover + .box2 {
-      display: block;
+    .hint:hover {
+      max-height: 400px;
+      background-color: #c4c4c4;
     }
 
-    .button1:after {
-      content: "Show Hint"
+    .hint-button:after {
+      content: "Show Hint";
     }
-    
-    .button1:hover:after {
-      content: "Hide Hint"
+
+    .hint:hover .hint-button:after{
+      content: "Hide Hint";
+    }
+
+    .hint:hover .hint-box {
+      opacity: 1;
     }
 
     a {
@@ -189,12 +194,12 @@
     Loading source...
   </div>
 
-    <div class="button1"></div>
-    
-    <div id="hint-container" class="box2">
+  <div class="hint">
+    <div class="hint-button"></div>
+    <div id="hint-container" class="hint-box">
       Loading hint...
+    </div>
   </div>
-
-
+  
 </body>
 </html>
