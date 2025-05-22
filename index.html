@@ -204,28 +204,49 @@
     let currentProblem = null;
 
     function displayProblem(problem) {
-      currentProblem = problem; // Store the current problem for answer checking
+      currentProblem = problem;
       
       const container0 = document.getElementById('date-container');
       const container = document.getElementById('problem-container');
       const container2 = document.getElementById('hint-container');
       const container3 = document.getElementById('source-container');
 
-      container0.innerHTML = `<p>${problem.date}</p>`;
-      container.innerHTML = `<p><strong>Problem:</strong> ${problem.statement}</p>`;
+      // Format date
+      container0.textContent = problem.date;
       
-      container2.innerHTML = `
-        ${problem.hint ? `<p><strong>Hint:</strong> ${problem.hint}</p>` : ''}
-      `;
-
-      container3.innerHTML = `
-        ${problem.link ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : ''}
-      `;
-
-      // MathJax typesetting
-      if (window.MathJax) {
-        MathJax.typesetPromise().catch(err => console.log("MathJax typesetting error:", err));
+      // Display problem statement with newlines
+      const formattedStatement = formatContentWithNewlines(problem.statement);
+      container.innerHTML = `<p><strong>Problem:</strong> ${formattedStatement}</p>`;
+      
+      // Display hint with newlines
+      if (problem.hint && problem.hint.trim() !== '') {
+        const formattedHint = formatContentWithNewlines(problem.hint);
+        container2.innerHTML = `<p><strong>Hint:</strong> ${formattedHint}</p>`;
+      } else {
+        container2.innerHTML = '<p>No hint available for this problem.</p>';
       }
+
+      // Display source
+      container3.innerHTML = problem.link 
+        ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
+        : '<p>No source available.</p>';
+
+      // Typeset all math content
+      if (window.MathJax) {
+        MathJax.typesetPromise([container, container2, container3])
+          .catch(err => console.log("MathJax typeset error:", err));
+      }
+    }
+
+    // Helper function to handle newlines in both text and MathJax
+    function formatContentWithNewlines(content) {
+      // First handle regular text newlines (convert \n to <br>)
+      let formatted = content.replace(/\n/g, '<br>');
+      
+      // Special handling for MathJax line breaks
+      formatted = formatted.replace(/\\\\/g, '\\\\<br>'); // For math line breaks
+      
+      return formatted;
     }
 
     function displayNoProblem() {
