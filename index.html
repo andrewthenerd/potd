@@ -378,40 +378,20 @@
       }, 100);
     }
 
-    function fetchProblems() {
-      fetch(CSV_URL)
-        .then(response => response.text())
-        .then(csvText => {
-          const parsed = Papa.parse(csvText, { header: true });
-          const problems = parsed.data.map(row => ({
-            date: row["Date"]?.trim(),
-            statement: row["Problem Statement"]?.trim(),
-            source: row["Source"]?.trim(),
-            link: row["Link"]?.trim(),
-            hint: row["Hint"]?.trim(),
-            answer: row["Answer"]?.trim(),
-            explanation: row["Explanation"]?.trim()
-          }));
-
-          console.log("Today's Date (UTC+8):", today);
-          console.log("Available Dates:", problems.map(p => p.date));
-
-          const todayProblem = problems.find(p => p.date === today);
-          if (todayProblem) {
-            displayProblem(todayProblem);
-          } else {
-            displayNoProblem();
-          }
-        })
-        .catch(error => {
-          console.error("Error loading CSV:", error);
-          displayNoProblem();
-        });
-    }
-
     // Initialize when page loads
     window.addEventListener('DOMContentLoaded', () => {
       fetchProblems();
+      
+      document.getElementById('next-question').addEventListener('click', () => {
+      if (todaysProblems.length > 0) {
+        currentIndex = (currentIndex + 1) % todaysProblems.length;
+        displayProblem(todaysProblems[currentIndex]);
+        document.getElementById('user-answer').value = '';
+        document.getElementById('feedback').className = 'box feedback';
+        document.getElementById('feedback').innerHTML = '';
+        }
+      });
+
       // In your initialization code
       document.getElementById('submit-answer').addEventListener('click', function(e) {
         e.preventDefault(); // Prevent form submission if in a form
