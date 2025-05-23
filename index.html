@@ -23,84 +23,163 @@
     body {
       font-family: sans-serif;
       background: #f8f9fa;
+      margin: 0;
       padding: 2rem;
     }
-    h1, h2 {
+    
+    h1 {
       text-align: center;
+      font-family: Arial, Helvetica, sans-serif;
     }
+    
+    h2 {
+      text-align: center;
+      font-size: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    
     .box {
+      position: relative;
       background: white;
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 1.5rem;
       max-width: 800px;
-      margin: 1.5rem auto;
       font-size: 16px;
+      height: fit-content;
+      margin: 1.5rem auto;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      align-items: left;
     }
+    
     .hint {
-      overflow: hidden;
+      position: relative;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1.5rem;
+      max-width: 800px;
+      font-size: 16px;
       max-height: 20px;
-      transition: max-height 0.6s, background-color 0.3s;
+      margin: 1.5rem auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      align-items: left;
+      overflow: hidden;
+      transition: max-height 0.6s ease, background-color 0.3s ease;
     }
-    .hint:hover {
-      max-height: 400px;
-      background-color: #e0e0e0;
-    }
+
     .hint-box {
       opacity: 0;
-      transition: opacity 0.2s;
-      margin-top: 0.5rem;
+      transition: opacity 0.2s ease;
+      margin-top: 0rem;
+      font-size: 16px;
     }
-    .hint:hover .hint-box {
-      opacity: 1;
+
+    .hint:hover {
+      max-height: 400px;
+      background-color: #c4c4c4;
     }
+
     .hint-button:after {
       content: "Show Hint";
     }
-    .hint:hover .hint-button:after {
+
+    .hint:hover .hint-button:after{
       content: "Hide Hint";
     }
+
+    .hint:hover .hint-box {
+      opacity: 1;
+    }
+
+    a {
+      color: #007bff;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    em {
+      color: #555;
+    }
+
+    footer {
+      max-width: 800px;
+    }
+    
     textarea {
       width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      height: fit-content;
+      padding: 12px 20px;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      background-color: #f8f8f8;
       font-size: 16px;
+      resize: none;
     }
+
     .button {
       background-color: #dedede;
       border: none;
       border-radius: 8px;
       color: black;
       padding: 10px 30px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
       font-size: 16px;
       cursor: pointer;
       transition: background-color 0.5s;
     }
+
     .button:hover {
       background-color: #c4c4c4;
     }
+
     .feedback {
       margin-top: 20px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      padding: 20px;
+      border: 0px; 
+      opacity: 0; /**change here**/
+      max-width: 800px;
+      font-size: 16px;
     }
+
     .correct {
       background-color: #d4edda;
       color: #155724;
       opacity: 1;
+      height: fit-content;
+      max-width: 800px;
+      font-size: 16px;
     }
+
     .incorrect {
       background-color: #f8d7da;
       color: #721c24;
       opacity: 1;
+      height: fit-content;
+      max-width: 800px;
+      font-size: 16px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .feedback:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.3);
     }
   </style>
 </head>
 <body>
   <h1>Problem of the Day</h1>
   <h2><span id="date-container"></span></h2>
+
+  <center><button class="button" id="next-question">Change Problem</button></center>
 
   <div id="problem-container" class="box">Loading problem...</div>
   <div id="source-container" class="box">Loading source...</div>
@@ -117,7 +196,6 @@
   </div>
 
   <div id="feedback" class="box feedback"></div>
-  <center><button class="button" id="next-question">Next Question</button></center>
 
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
