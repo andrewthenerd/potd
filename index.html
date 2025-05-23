@@ -1,174 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Problem of the Day</title>
+
+  <!-- MathJax and CSV Parser -->
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script>
     window.MathJax = {
       tex: {
-        inlineMath: [['\\(', '\\)'], ['$', '$']], // for inline math
-        displayMath: [['\\[', '\\]'], ['$$', '$$']] // for block math
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']]
       },
       svg: { fontCache: 'global' }
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
   <style>
     body {
       font-family: sans-serif;
       background: #f8f9fa;
-      margin: 0;
       padding: 2rem;
     }
-    
-    h1 {
+    h1, h2 {
       text-align: center;
-      font-family: Arial, Helvetica, sans-serif;
     }
-    
-    h2 {
-      text-align: center;
-      font-size: 20px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-    
     .box {
-      position: relative;
       background: white;
       border: 1px solid #ccc;
       border-radius: 8px;
       padding: 1.5rem;
       max-width: 800px;
-      font-size: 16px;
-      height: fit-content;
       margin: 1.5rem auto;
+      font-size: 16px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      align-items: left;
     }
-    
     .hint {
-      position: relative;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 1.5rem;
-      max-width: 800px;
-      font-size: 16px;
-      max-height: 20px;
-      margin: 1.5rem auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      align-items: left;
       overflow: hidden;
-      transition: max-height 0.6s ease, background-color 0.3s ease;
+      max-height: 20px;
+      transition: max-height 0.6s, background-color 0.3s;
     }
-
-    .hint-box {
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      margin-top: 0rem;
-      font-size: 16px;
-    }
-
     .hint:hover {
       max-height: 400px;
-      background-color: #c4c4c4;
+      background-color: #e0e0e0;
     }
-
-    .hint-button:after {
-      content: "Show Hint";
+    .hint-box {
+      opacity: 0;
+      transition: opacity 0.2s;
+      margin-top: 0.5rem;
     }
-
-    .hint:hover .hint-button:after{
-      content: "Hide Hint";
-    }
-
     .hint:hover .hint-box {
       opacity: 1;
     }
-
-    a {
-      color: #007bff;
+    .hint-button:after {
+      content: "Show Hint";
     }
-    
-    a:hover {
-      text-decoration: underline;
+    .hint:hover .hint-button:after {
+      content: "Hide Hint";
     }
-    
-    em {
-      color: #555;
-    }
-
-    footer {
-      max-width: 800px;
-    }
-    
     textarea {
       width: 100%;
-      height: fit-content;
-      padding: 12px 20px;
-      box-sizing: border-box;
-      border: 2px solid #ccc;
-      border-radius: 4px;
-      background-color: #f8f8f8;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
       font-size: 16px;
-      resize: none;
     }
-
     .button {
       background-color: #dedede;
       border: none;
       border-radius: 8px;
       color: black;
       padding: 10px 30px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
       font-size: 16px;
       cursor: pointer;
       transition: background-color 0.5s;
     }
-
     .button:hover {
       background-color: #c4c4c4;
     }
-
     .feedback {
       margin-top: 20px;
-      padding: 20px;
-      border: 0px; 
       opacity: 0;
-      max-width: 800px;
-      font-size: 16px;
+      transition: opacity 0.3s ease;
     }
-
     .correct {
       background-color: #d4edda;
       color: #155724;
       opacity: 1;
-      height: fit-content;
-      max-width: 800px;
-      font-size: 16px;
     }
-
     .incorrect {
       background-color: #f8d7da;
       color: #721c24;
       opacity: 1;
-      height: fit-content;
-      max-width: 800px;
-      font-size: 16px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    .feedback:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.3);
     }
   </style>
 </head>
@@ -176,62 +102,86 @@
   <h1>Problem of the Day</h1>
   <h2><span id="date-container"></span></h2>
 
-  <div id="problem-container" class="box">
-    Loading problem...
-  </div>
-
-  <div id="source-container" class="box">
-    Loading source...
-  </div>
+  <div id="problem-container" class="box">Loading problem...</div>
+  <div id="source-container" class="box">Loading source...</div>
 
   <div class="hint">
     <div class="hint-button"></div>
-    <div id="hint-container" class="hint-box">
-      Loading hint...
-    </div>
+    <div id="hint-container" class="hint-box">Loading hint...</div>
   </div>
 
   <div id="answer" class="box">
     Answer:
-    <textarea id="user-answer" rows="1" columns="1"></textarea>
+    <textarea id="user-answer"></textarea>
     <center><button class="button" id="submit-answer">Submit</button></center>
   </div>
 
   <div id="feedback" class="box feedback"></div>
-
   <center><button class="button" id="next-question">Next Question</button></center>
 
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
 
-    function formatDateToISO(date) {
-      return date.toISOString().split('T')[0]; // "YYYY-MM-DD"
-    }
-
     const now = new Date();
     const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-    const today = formatDateToISO(utc8);
+    const today = utc8.toISOString().split('T')[0];
 
-    let currentProblem = null;
     let todaysProblems = [];
     let currentIndex = 0;
+    let currentProblem = null;
 
-    function displayCurrentProblem() {
-      if (todaysProblems.length > 0 && currentIndex < todaysProblems.length) {
-        displayProblem(todaysProblems[currentIndex]);
-      }
+    function formatContentWithNewlines(content) {
+      return content.replace(/\n/g, '<br>').replace(/\\\\/g, '\\\\<br>');
     }
 
-    document.getElementById('next-question').addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % todaysProblems.length;
-      displayCurrentProblem();
-    });
+    function displayProblem(problem) {
+      currentProblem = problem;
+
+      document.getElementById('date-container').textContent = problem.date;
+      document.getElementById('problem-container').innerHTML = `<p><strong>Problem:</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
+      document.getElementById('hint-container').innerHTML = problem.hint
+        ? `<p><strong>Hint:</strong> ${formatContentWithNewlines(problem.hint)}</p>`
+        : `<p>No hint available.</p>`;
+      document.getElementById('source-container').innerHTML = problem.link
+        ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
+        : `<p>No source available.</p>`;
+
+      document.getElementById('user-answer').value = '';
+      document.getElementById('feedback').className = 'box feedback';
+      document.getElementById('feedback').innerHTML = '';
+      
+      if (window.MathJax) MathJax.typesetPromise();
+    }
+
+    function displayNoProblem() {
+      document.getElementById('date-container').textContent = today;
+      document.getElementById('problem-container').innerHTML = `<p>No problem found for today.</p>`;
+      document.getElementById('hint-container').innerHTML = `<p>No hint available.</p>`;
+      document.getElementById('source-container').innerHTML = `<p>No source available.</p>`;
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase().replace(/\s+/g, '');
+      const correctAnswer = currentProblem.answer.toLowerCase().replace(/\s+/g, '');
+      const feedback = document.getElementById('feedback');
+
+      if (userAnswer === correctAnswer) {
+        feedback.className = 'box feedback correct';
+        feedback.innerHTML = `<h3>Correct!</h3><p><strong>Explanation:</strong> ${currentProblem.explanation || 'No explanation available.'}</p>`;
+      } else {
+        feedback.className = 'box feedback incorrect';
+        feedback.innerHTML = `<h3>Not quite right.</h3><p>The correct answer is: ${currentProblem.answer}</p><p><strong>Explanation:</strong> ${currentProblem.explanation || 'No explanation available.'}</p>`;
+      }
+
+      if (window.MathJax) MathJax.typesetPromise();
+      setTimeout(() => feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+    }
 
     function fetchProblems() {
       fetch(CSV_URL)
-        .then(response => response.text())
-        .then(csvText => {
-          const parsed = Papa.parse(csvText, { header: true });
+        .then(res => res.text())
+        .then(csv => {
+          const parsed = Papa.parse(csv, { header: true });
           const problems = parsed.data.map(row => ({
             date: row["Date"]?.trim(),
             statement: row["Problem Statement"]?.trim(),
@@ -246,167 +196,39 @@
           currentIndex = 0;
 
           if (todaysProblems.length > 0) {
-            displayCurrentProblem();
+            displayProblem(todaysProblems[currentIndex]);
           } else {
             displayNoProblem();
           }
         })
-        .catch(error => {
-          console.error("Error loading CSV:", error);
+        .catch(err => {
+          console.error("CSV fetch error:", err);
           displayNoProblem();
         });
     }
 
-    function displayProblem(problem) {
-      currentProblem = problem;
-      
-      const container0 = document.getElementById('date-container');
-      const container = document.getElementById('problem-container');
-      const container2 = document.getElementById('hint-container');
-      const container3 = document.getElementById('source-container');
-
-      // Format date
-      container0.textContent = problem.date;
-      
-      // Display problem statement with newlines
-      const formattedStatement = formatContentWithNewlines(problem.statement);
-      container.innerHTML = `<p><strong>Problem:</strong> ${formattedStatement}</p>`;
-      
-      // Display hint with newlines
-      if (problem.hint && problem.hint.trim() !== '') {
-        const formattedHint = formatContentWithNewlines(problem.hint);
-        container2.innerHTML = `<p><strong>Hint:</strong> ${formattedHint}</p>`;
-      } else {
-        container2.innerHTML = '<p>No hint available for this problem.</p>';
-      }
-
-      // Display source
-      container3.innerHTML = problem.link 
-        ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
-        : '<p>No source available.</p>';
-
-      // Typeset all math content
-      if (window.MathJax) {
-        MathJax.typesetPromise([container, container2, container3])
-          .catch(err => console.log("MathJax typeset error:", err));
-      }
-    }
-
-    // Helper function to handle newlines in both text and MathJax
-    function formatContentWithNewlines(content) {
-      // First handle regular text newlines (convert \n to <br>)
-      let formatted = content.replace(/\n/g, '<br>');
-      
-      // Special handling for MathJax line breaks
-      formatted = formatted.replace(/\\\\/g, '\\\\<br>'); // For math line breaks
-      
-      return formatted;
-    }
-
-    function displayNoProblem() {
-      const container0 = document.getElementById('date-container');
-      const container = document.getElementById('problem-container');
-      const container2 = document.getElementById('hint-container');
-      const container3 = document.getElementById('source-container');
-      
-      container0.innerHTML = `<p>${today}</p>`;
-      container.innerHTML = `<p>No problem found for today.</p>`;
-      container2.innerHTML = `<p>No hint available.</p>`;
-      container3.innerHTML = `<p>No source available.</p>`;
-    }
-
-    function checkAnswer() {
-      if (!currentProblem) return;
-      
-      const userAnswer = document.getElementById('user-answer').value.trim();
-      const feedbackDiv = document.getElementById('feedback');
-      
-      // Normalize answers for comparison
-      const normalizedUserAnswer = userAnswer.toLowerCase().replace(/\s+/g, '');
-      const normalizedCorrectAnswer = currentProblem.answer.toLowerCase().replace(/\s+/g, '');
-      
-      // Check if answer is correct
-      const isCorrect = normalizedUserAnswer === normalizedCorrectAnswer;
-
-      // Display feedback
-      feedbackDiv.style.display = 'block';
-      if (isCorrect) {
-          feedbackDiv.className = 'box feedback correct';
-          if (currentProblem.explanation && currentProblem.explanation.trim() !== '') {
-            feedbackDiv.innerHTML = `
-                <h3>Correct!</h3>
-                ${currentProblem.explanation ? `<p><strong>Explanation:</strong> ${currentProblem.explanation}</p>` : ''}
-            `;
-          }
-          else {
-            feedbackDiv.innerHTML = `
-                <h3>Correct!</h3>
-                ${currentProblem.explanation ? `<p><strong>Explanation:</strong> There are no explanations for this problem.</p>` : ''}
-            `;
-          }
-          
-
-      } else {
-          if (currentProblem.explanation && currentProblem.explanation.trim() !== '') {
-            feedbackDiv.className = 'box feedback incorrect';
-            feedbackDiv.innerHTML = `
-                <h3>Not quite right.</h3>
-                <p>The correct answer is: ${currentProblem.answer}</p>
-                ${currentProblem.explanation ? `<p><strong>Explanation:</strong> ${currentProblem.explanation}</p>` : ''}
-            `;
-          }
-          else {
-            feedbackDiv.className = 'box feedback incorrect';
-            feedbackDiv.innerHTML = `
-                <h3>Not quite right.</h3>
-                <p>The correct answer is: ${currentProblem.answer}</p>
-                ${currentProblem.explanation ? `<p><strong>Explanation:</strong> There are no explanations for this problem.</p>` : ''}
-            `;
-          }
-      }
-      
-      // Re-typeset in case feedback contains math
-      if (window.MathJax) {
-        MathJax.typesetPromise().catch(err => console.log("MathJax typesetting error:", err));
-      }
-
-      setTimeout(() => {
-      feedbackDiv.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest'
-        });
-      }, 100);
-    }
-
-    // Initialize when page loads
     window.addEventListener('DOMContentLoaded', () => {
       fetchProblems();
-      
-      document.getElementById('next-question').addEventListener('click', () => {
-      if (todaysProblems.length > 0) {
-        currentIndex = (currentIndex + 1) % todaysProblems.length;
-        displayProblem(todaysProblems[currentIndex]);
-        document.getElementById('user-answer').value = '';
-        document.getElementById('feedback').className = 'box feedback';
-        document.getElementById('feedback').innerHTML = '';
-        }
-      });
 
-      // In your initialization code
-      document.getElementById('submit-answer').addEventListener('click', function(e) {
-        e.preventDefault(); // Prevent form submission if in a form
+      document.getElementById('submit-answer').addEventListener('click', (e) => {
+        e.preventDefault();
         checkAnswer();
       });
 
-      // Also update the Enter key handler if you have one
-      document.getElementById('user-answer').addEventListener('keypress', function(e) {
+      document.getElementById('user-answer').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
           checkAnswer();
         }
       });
+
+      document.getElementById('next-question').addEventListener('click', () => {
+        if (todaysProblems.length > 0) {
+          currentIndex = (currentIndex + 1) % todaysProblems.length;
+          displayProblem(todaysProblems[currentIndex]);
+        }
+      });
     });
   </script>
-
 </body>
 </html>
