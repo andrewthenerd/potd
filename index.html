@@ -199,6 +199,8 @@
 
   <div id="feedback" class="box feedback"></div>
 
+  <center><button class="button" id="next-question">Next Question</button></center>
+
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
 
@@ -211,6 +213,49 @@
     const today = formatDateToISO(utc8);
 
     let currentProblem = null;
+    let todaysProblems = [];
+    let currentIndex = 0;
+
+    function displayCurrentProblem() {
+      if (todaysProblems.length > 0 && currentIndex < todaysProblems.length) {
+        displayProblem(todaysProblems[currentIndex]);
+      }
+    }
+
+    document.getElementById('next-question').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % todaysProblems.length;
+      displayCurrentProblem();
+    });
+
+    function fetchProblems() {
+      fetch(CSV_URL)
+        .then(response => response.text())
+        .then(csvText => {
+          const parsed = Papa.parse(csvText, { header: true });
+          const problems = parsed.data.map(row => ({
+            date: row["Date"]?.trim(),
+            statement: row["Problem Statement"]?.trim(),
+            source: row["Source"]?.trim(),
+            link: row["Link"]?.trim(),
+            hint: row["Hint"]?.trim(),
+            answer: row["Answer"]?.trim(),
+            explanation: row["Explanation"]?.trim()
+          }));
+
+          todaysProblems = problems.filter(p => p.date === today);
+          currentIndex = 0;
+
+          if (todaysProblems.length > 0) {
+            displayCurrentProblem();
+          } else {
+            displayNoProblem();
+          }
+        })
+        .catch(error => {
+          console.error("Error loading CSV:", error);
+          displayNoProblem();
+        });
+    }
 
     function displayProblem(problem) {
       currentProblem = problem;
@@ -382,5 +427,6 @@
       });
     });
   </script>
+
 </body>
 </html>
