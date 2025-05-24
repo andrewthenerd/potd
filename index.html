@@ -216,14 +216,14 @@
       currentProblem = problem;
 
       document.getElementById('date-container').textContent = problem.date;
-      document.getElementById('problem-container').innerHTML = `<p><strong>Problem:</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
+      document.getElementById('problem-container').innerHTML = `<p><strong>Problem ${formatContentWithNewlines(problem.number)}:</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
       document.getElementById('hint-container').innerHTML = problem.hint
         ? `<p><strong>Hint:</strong> ${formatContentWithNewlines(problem.hint)}</p>`
         : `<p>No hint available.</p>`;
       document.getElementById('source-container').innerHTML = problem.link
         ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
         : `<p>No source available.</p>`;
-
+      
       document.getElementById('user-answer').value = '';
       document.getElementById('feedback').className = 'box feedback';
       document.getElementById('feedback').innerHTML = '';
@@ -261,6 +261,7 @@
         .then(csv => {
           const parsed = Papa.parse(csv, { header: true });
           const problems = parsed.data.map(row => ({
+            number: row["No."]?.trim(),
             date: row["Date"]?.trim(),
             statement: row["Problem Statement"]?.trim(),
             source: row["Source"]?.trim(),
@@ -269,10 +270,10 @@
             answer: row["Answer"]?.trim(),
             explanation: row["Explanation"]?.trim()
           }));
-
+          
           todaysProblems = problems.filter(p => p.date === today);
           currentIndex = 0;
-
+          
           if (todaysProblems.length > 0) {
             displayProblem(todaysProblems[currentIndex]);
           } else {
