@@ -27,180 +27,102 @@
       margin: 0;
       padding: 2rem;
     }
-    
-    h1 {
+    h1, h2 {
       text-align: center;
-      font-family: Arial, Helvetica, sans-serif;
     }
-    
-    h2 {
-      text-align: center;
-      font-size: 20px;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-    
     .box {
-      position: relative;
       background: #1f2223;
       border: 1px solid #51585b;
       border-radius: 8px;
       padding: 1.5rem;
-      color: white;
       max-width: 800px;
-      font-size: 16px;
-      height: fit-content;
       margin: 1.5rem auto;
-      align-items: left;
+      font-size: 16px;
+      color: white;
     }
-    
     .hint {
-      position: relative;
+      overflow: hidden;
+      max-height: 20px;
+      transition: max-height 0.6s, background-color 0.3s;
       background: #1f2223;
       border: 1px solid #51585b;
       border-radius: 8px;
-      padding: 1.5rem;
-      max-width: 800px;
-      font-size: 16px;
-      max-height: 20px;
-      margin: 1.5rem auto;
-      align-items: left;
-      overflow: hidden;
-      transition: max-height 0.6s ease, background-color 0.3s ease;
     }
-
-    .hint-box {
-      color: white;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      margin-top: 0rem;
-      font-size: 16px;
-    }
-
     .hint:hover {
       max-height: 400px;
       background-color: #4a5153;
     }
-
-    .hint-button {
+    .hint-box {
+      opacity: 0;
+      transition: opacity 0.2s;
+      margin-top: 0.5rem;
       color: white;
     }
-
-    .hint-button:after {
-      content: "Show Hint";
-    }
-
-    .hint:hover .hint-button:after{
-      content: "Hide Hint";
-    }
-
     .hint:hover .hint-box {
       opacity: 1;
     }
-
-    a {
-      color: #3cd0ff;
-    }
-    
-    a:hover {
-      text-decoration: underline;
-    }
-    
-    em {
-      color: #555;
-    }
-
-    footer {
-      max-width: 800px;
-    }
-    
-    textarea {
+    .hint-button:after {
+      content: "Show Hint";
       color: white;
-      width: 100%;
-      height: 50px;
-      padding: 12px 20px;
-      box-sizing: border-box;
-      border: 1px solid #7c7c7c;
-      border-radius: 4px;
-      background-color: #242728;
-      font-size: 16px;
-      resize: none;
     }
-
+    .hint:hover .hint-button:after {
+      content: "Hide Hint";
+    }
     .button {
-      border: 0px solid #7c7c7c;
-      background: rgb(57, 57, 57);
-      border-radius: 8px;
+      background-color: rgb(57, 57, 57);
       color: white;
       padding: 10px 30px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
+      border: none;
+      border-radius: 8px;
       font-size: 16px;
       cursor: pointer;
       transition: background-color 0.5s;
     }
-
     .button:hover {
       background-color: #5b5b5b;
     }
-
+    textarea {
+      width: 100%;
+      padding: 12px;
+      background-color: #242728;
+      color: white;
+      border: 1px solid #7c7c7c;
+      border-radius: 4px;
+      font-size: 16px;
+      resize: none;
+    }
     .feedback {
       margin-top: 20px;
-      padding: 20px;
-      border: 0px; 
-      opacity: 0; /**change here**/
-      max-width: 800px;
-      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
-
     .correct {
       background-color: #d4edda;
       color: #155724;
       opacity: 1;
-      height: fit-content;
-      max-width: 800px;
-      font-size: 16px;
     }
-
     .incorrect {
       background-color: #f8d7da;
       color: #721c24;
       opacity: 1;
-      height: fit-content;
-      max-width: 800px;
-      font-size: 16px;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    .feedback:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0, 119, 204, 0.3);
     }
   </style>
 </head>
 <body>
   <h1>Problem of the Day</h1>
   <h2><span id="date-container"></span></h2>
-
   <center><button class="button" id="next-question">Change Problem</button></center>
-
   <div id="problem-container" class="box">Loading problem...</div>
   <div id="source-container" class="box">Loading source...</div>
-
   <div class="hint">
     <div class="hint-button"></div>
     <div id="hint-container" class="hint-box">Loading hint...</div>
   </div>
-
   <div id="answer" class="box">
     Answer:
     <textarea id="user-answer"></textarea>
     <center><button class="button" id="submit-answer">Submit</button></center>
   </div>
-
   <div id="feedback" class="box feedback"></div>
 
   <script>
@@ -215,25 +137,18 @@
     let currentProblem = null;
 
     function formatContentWithNewlines(content) {
-      return content.replace(/\n/g, '<br>').replace(/\\\\/g, '\\\\<br>');
+      return content.replace(/\\n/g, '<br>').replace(/\\\\/g, '\\\\<br>');
     }
 
     function displayProblem(problem) {
       currentProblem = problem;
-
       document.getElementById('date-container').textContent = problem.date;
-      document.getElementById('problem-container').innerHTML = `<p><strong>Problem ${formatContentWithNewlines(problem.number)}.</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
-      document.getElementById('hint-container').innerHTML = problem.hint
-        ? `<p><strong>Hint:</strong> ${formatContentWithNewlines(problem.hint)}</p>`
-        : `<p>No hint available.</p>`;
-      document.getElementById('source-container').innerHTML = problem.link
-        ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
-        : `<p>No source available.</p>`;
-      
+      document.getElementById('problem-container').innerHTML = `<p><strong>Problem:</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
+      document.getElementById('hint-container').innerHTML = problem.hint ? `<p><strong>Hint:</strong> ${formatContentWithNewlines(problem.hint)}</p>` : `<p>No hint available.</p>`;
+      document.getElementById('source-container').innerHTML = problem.link ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>` : `<p>No source available.</p>`;
       document.getElementById('user-answer').value = '';
       document.getElementById('feedback').className = 'box feedback';
       document.getElementById('feedback').innerHTML = '';
-      
       if (window.MathJax) MathJax.typesetPromise();
     }
 
@@ -245,8 +160,8 @@
     }
 
     function checkAnswer() {
-      const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase().replace(/\s+/g, '');
-      const correctAnswer = currentProblem.answer.toLowerCase().replace(/\s+/g, '');
+      const userAnswer = document.getElementById('user-answer').value.trim().toLowerCase().replace(/\\s+/g, '');
+      const correctAnswer = currentProblem.answer.toLowerCase().replace(/\\s+/g, '');
       const feedback = document.getElementById('feedback');
 
       if (userAnswer === correctAnswer) {
@@ -267,8 +182,7 @@
         .then(csv => {
           const parsed = Papa.parse(csv, { header: true });
           const problems = parsed.data.map(row => ({
-            number: row["No."]?.trim(),
-            date: row["Date"]?.trim(),
+            date: new Date(row["Date"]).toISOString().split('T')[0],
             statement: row["Problem Statement"]?.trim(),
             source: row["Source"]?.trim(),
             link: row["Link"]?.trim(),
@@ -276,17 +190,10 @@
             answer: row["Answer"]?.trim(),
             explanation: row["Explanation"]?.trim()
           }));
-            
-          todaysProblems = problems.filter(p => {
-            if (!p.date) return false;
-            const tryDate = new Date(p.date);
-            if (isNaN(tryDate)) return false;
-            const normalizedDate = tryDate.toISOString().split('T')[0];
-            return normalizedDate === today;
-          });
 
+          todaysProblems = problems.filter(p => p.date === today);
           currentIndex = 0;
-          
+
           if (todaysProblems.length > 0) {
             displayProblem(todaysProblems[currentIndex]);
           } else {
@@ -301,19 +208,16 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       fetchProblems();
-
-      document.getElementById('submit-answer').addEventListener('click', (e) => {
+      document.getElementById('submit-answer').addEventListener('click', e => {
         e.preventDefault();
         checkAnswer();
       });
-
-      document.getElementById('user-answer').addEventListener('keypress', (e) => {
+      document.getElementById('user-answer').addEventListener('keypress', e => {
         if (e.key === 'Enter') {
           e.preventDefault();
           checkAnswer();
         }
       });
-
       document.getElementById('next-question').addEventListener('click', () => {
         if (todaysProblems.length > 0) {
           currentIndex = (currentIndex + 1) % todaysProblems.length;
