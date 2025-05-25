@@ -267,8 +267,7 @@
         .then(csv => {
           const parsed = Papa.parse(csv, { header: true });
           const problems = parsed.data.map(row => ({
-            number: row["No."]?.trim(),
-            date: row["Date"]?.trim(),
+            date: row["Date"]?.trim().slice(0, 10),  // ✅ Simple string slice
             statement: row["Problem Statement"]?.trim(),
             source: row["Source"]?.trim(),
             link: row["Link"]?.trim(),
@@ -276,14 +275,13 @@
             answer: row["Answer"]?.trim(),
             explanation: row["Explanation"]?.trim()
           }));
-          
-          todaysProblems = problems.filter(p => {
-           const normalizedDate = new Date(p.date).toISOString().split('T')[0];
-           return normalizedDate === today;
-          });
-
+    
+          console.log("Today is:", today);
+          console.log("Available dates:", problems.map(p => p.date));
+    
+          todaysProblems = problems.filter(p => p.date === today);
           currentIndex = 0;
-          
+    
           if (todaysProblems.length > 0) {
             displayProblem(todaysProblems[currentIndex]);
           } else {
