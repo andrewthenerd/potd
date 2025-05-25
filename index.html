@@ -206,9 +206,7 @@
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT557Kwc6JfNHfUDNQf8cbiiMXGtbOapZS4MItk5DdB5_cwju35a0xoO9kFoct1Iwl4gMZfKYhKF1vT/pub?output=csv";
 
-    const now = new Date();
-    const utc8 = new Date(now.getTime() + 8 * 60 * 60 * 1000);
-    const today = utc8.toISOString().split('T')[0];
+    const today = new Date().toISOString().slice(0, 10);
 
     let todaysProblems = [];
     let currentIndex = 0;
