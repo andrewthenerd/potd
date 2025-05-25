@@ -276,10 +276,13 @@
             answer: row["Answer"]?.trim(),
             explanation: row["Explanation"]?.trim()
           }));
-          
+            
           todaysProblems = problems.filter(p => {
-           const normalizedDate = new Date(p.date).toISOString().split('T')[0];
-           return normalizedDate === today;
+            if (!p.date) return false;
+            const tryDate = new Date(p.date);
+            if (isNaN(tryDate)) return false;
+            const normalizedDate = tryDate.toISOString().split('T')[0];
+            return normalizedDate === today;
           });
 
           currentIndex = 0;
