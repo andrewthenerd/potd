@@ -21,54 +21,55 @@
 
   <style>
     body {
+      color: white;
       font-family: sans-serif;
-      background: #f8f9fa;
+      background: #232728;
       margin: 0;
       padding: 2rem;
     }
-
+    
     h1 {
       text-align: center;
       font-family: Arial, Helvetica, sans-serif;
     }
-
+    
     h2 {
       text-align: center;
       font-size: 20px;
       font-family: Arial, Helvetica, sans-serif;
     }
-
+    
     .box {
       position: relative;
-      background: white;
-      border: 1px solid #ccc;
+      background: #1f2223;
+      border: 1px solid #51585b;
       border-radius: 8px;
       padding: 1.5rem;
+      color: white;
       max-width: 800px;
       font-size: 16px;
       height: fit-content;
       margin: 1.5rem auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       align-items: left;
     }
-
+    
     .hint {
       position: relative;
-      background: white;
-      border: 1px solid #ccc;
+      background: #1f2223;
+      border: 1px solid #51585b;
       border-radius: 8px;
       padding: 1.5rem;
       max-width: 800px;
       font-size: 16px;
       max-height: 20px;
       margin: 1.5rem auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       align-items: left;
       overflow: hidden;
       transition: max-height 0.6s ease, background-color 0.3s ease;
     }
 
     .hint-box {
+      color: white;
       opacity: 0;
       transition: opacity 0.2s ease;
       margin-top: 0rem;
@@ -77,7 +78,11 @@
 
     .hint:hover {
       max-height: 400px;
-      background-color: #c4c4c4;
+      background-color: #4a5153;
+    }
+
+    .hint-button {
+      color: white;
     }
 
     .hint-button:after {
@@ -93,13 +98,13 @@
     }
 
     a {
-      color: #007bff;
+      color: #3cd0ff;
     }
-
+    
     a:hover {
       text-decoration: underline;
     }
-
+    
     em {
       color: #555;
     }
@@ -107,24 +112,25 @@
     footer {
       max-width: 800px;
     }
-
+    
     textarea {
+      color: white;
       width: 100%;
       height: 50px;
       padding: 12px 20px;
       box-sizing: border-box;
-      border: 2px solid #ccc;
+      border: 1px solid #7c7c7c;
       border-radius: 4px;
-      background-color: #f8f8f8;
+      background-color: #242728;
       font-size: 16px;
       resize: none;
     }
 
     .button {
-      background-color: #dedede;
-      border: none;
+      border: 0px solid #7c7c7c;
+      background: rgb(57, 57, 57);
       border-radius: 8px;
-      color: black;
+      color: white;
       padding: 10px 30px;
       text-align: center;
       text-decoration: none;
@@ -135,7 +141,7 @@
     }
 
     .button:hover {
-      background-color: #c4c4c4;
+      background-color: #5b5b5b;
     }
 
     .feedback {
@@ -216,19 +222,18 @@
       currentProblem = problem;
 
       document.getElementById('date-container').textContent = problem.date;
-      document.getElementById('problem-container').innerHTML = `<p><strong>Problem ${formatContentWithNewlines(problem.number)}:</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
+      document.getElementById('problem-container').innerHTML = `<p><strong>Problem ${formatContentWithNewlines(problem.number)}.</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
       document.getElementById('hint-container').innerHTML = problem.hint
         ? `<p><strong>Hint:</strong> ${formatContentWithNewlines(problem.hint)}</p>`
         : `<p>No hint available.</p>`;
       document.getElementById('source-container').innerHTML = problem.link
         ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
         : `<p>No source available.</p>`;
-
       
       document.getElementById('user-answer').value = '';
       document.getElementById('feedback').className = 'box feedback';
       document.getElementById('feedback').innerHTML = '';
-
+      
       if (window.MathJax) MathJax.typesetPromise();
     }
 
@@ -262,7 +267,8 @@
         .then(csv => {
           const parsed = Papa.parse(csv, { header: true });
           const problems = parsed.data.map(row => ({
-            date: row["Date"]?.trim().slice(0, 10),  // ✅ Simple string slice
+            number: row["No."]?.trim(),
+            date: row["Date"]?.trim(),
             statement: row["Problem Statement"]?.trim(),
             source: row["Source"]?.trim(),
             link: row["Link"]?.trim(),
@@ -270,13 +276,14 @@
             answer: row["Answer"]?.trim(),
             explanation: row["Explanation"]?.trim()
           }));
-    
-          console.log("Today is:", today);
-          console.log("Available dates:", problems.map(p => p.date));
-    
-          todaysProblems = problems.filter(p => p.date === today);
+          
+          todaysProblems = problems.filter(p => {
+           const normalizedDate = new Date(p.date).toISOString().split('T')[0];
+           return normalizedDate === today;
+          });
+
           currentIndex = 0;
-    
+          
           if (todaysProblems.length > 0) {
             displayProblem(todaysProblems[currentIndex]);
           } else {
@@ -288,7 +295,7 @@
           displayNoProblem();
         });
     }
-    
+
     window.addEventListener('DOMContentLoaded', () => {
       fetchProblems();
 
