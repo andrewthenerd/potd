@@ -265,7 +265,8 @@
         .then(csv => {
           const parsed = Papa.parse(csv, { header: true });
           const problems = parsed.data.map(row => ({
-            date: row["Date"]?.trim().slice(0, 10),  // ✅ Simple string slice
+            number: row["No."]?.trim().slice(0, 10), 
+            date: row["Date"]?.trim().slice(0, 10), 
             statement: row["Problem Statement"]?.trim(),
             source: row["Source"]?.trim(),
             link: row["Link"]?.trim(),
