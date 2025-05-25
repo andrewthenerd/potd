@@ -277,7 +277,11 @@
             explanation: row["Explanation"]?.trim()
           }));
           
-          todaysProblems = problems.filter(p => p.date === today);
+          todaysProblems = problems.filter(p => {
+           const normalizedDate = new Date(p.date).toISOString().split('T')[0];
+           return normalizedDate === today;
+          });
+
           currentIndex = 0;
           
           if (todaysProblems.length > 0) {
