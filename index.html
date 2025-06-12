@@ -188,7 +188,6 @@
   <center><button class="button" id="next-question">Change Problem</button></center>
 
   <div id="problem-container" class="box">Loading problem...</div>
-  <div id="source-container" class="box">Loading source...</div>
 
   <div class="hint">
     <div class="hint-button"></div>
@@ -220,14 +219,10 @@
       currentProblem = problem;
 
       document.getElementById('date-container').textContent = problem.date;
-      document.getElementById('problem-container').innerHTML = `<p><strong>Problem ${formatContentWithNewlines(problem.number)}.</strong> ${formatContentWithNewlines(problem.statement)}</p>`;
+      document.getElementById('problem-container').innerHTML = `<p><strong>Problem ${formatContentWithNewlines(problem.number)}.</strong> (<a href="${problem.link}" target="_blank">${problem.source}</a>) ${formatContentWithNewlines(problem.statement)}</p>`;
       document.getElementById('hint-container').innerHTML = problem.hint
         ? `<p><strong>Hint:</strong> ${formatContentWithNewlines(problem.hint)}</p>`
         : `<p>No hint available.</p>`;
-      document.getElementById('source-container').innerHTML = problem.link
-        ? `<p><strong>Source:</strong> <a href="${problem.link}" target="_blank">${problem.source}</a></p>`
-        : `<p>No source available.</p>`;
-      
       document.getElementById('user-answer').value = '';
       document.getElementById('feedback').className = 'box feedback';
       document.getElementById('feedback').innerHTML = '';
